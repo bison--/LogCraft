@@ -1,6 +1,7 @@
 #!/usr/var/python
 from datetime import datetime
 from datetime import timedelta
+import sys
 import time
 
 
@@ -9,7 +10,18 @@ startTime = time.time()
 #2013-01-21 04:59:01 [INFO] Connection reset
 #2013-01-21 04:59:01 [INFO] NAME lost connection: disconnect.endOfStream
 #'/var/minecraftServer/theWorld/server.log.bak', 
-logFiles = ('/var/minecraftServer/theWorld/server.log',)
+
+
+logFiles = []  #('/var/minecraftServer/theWorld/server.log',)
+outputMode = ''
+if len(sys.argv) <= 2:
+	print 'first parameter MUST be the mode -html or -shell'
+	print 'all other parameters are the logfiles'
+	exit(1)
+else:
+	outputMode = sys.argv[1].replace('-', '')
+	for i in range(2, len(sys.argv)):
+		logFiles.append(sys.argv[i])
 
 logFileStr = ''
 
@@ -24,15 +36,19 @@ def getUsers(logFileAr):
 	users = []
 	
 	for r in logFileAr:
-		if '[AuthMe]' in r and 'logged in' in r:
+		# only for the add-in module 'AuthMe'
+		# '[AuthMe]' in r and 
+		if 'logged in' in r:
 			cols = r.split(' ')
-			if len(cols) >= 4 and not cols[4] in users:
-				users.append(cols[4])
+			#if len(cols) >= 4 and not cols[4] in users:
+			#	users.append(cols[4])
+			if len(cols) >= 3 and not cols[3] in users:
+				users.append(cols[3])
 	return users
 
 def getRelevantEntrys(logFileAr):
 	relEntrys = []
-	relStuff = ['lost connection', 'logged in']
+	relStuff = ['lost connection', 'logged in', 'fell from a high place', 'was slain by', 'drowned', 'in lava']
 	for r in logFileAr:
 		for entry in relStuff:
 			if entry in r:
@@ -74,6 +90,12 @@ def getUserPlaytime(username, entrysAr):
 	#return time.strftime('%d %H:%M:%S', timedelta(0, seconds))
 	#return time.strftime('%d %H:%M:%S', time.gmtime(seconds))
 
+def getUserFirstLogin(username, entrysAr):
+	for r in entrysAr:
+		if username in r:
+			cols = r.split(' ')
+			return cols[0] +' '+ cols[1]
+
 def getUserLastLogin(username, entrysAr):
 	for r in reversed(entrysAr):
 		if username in r:
@@ -106,18 +128,40 @@ def getDateFromEntry(entry):
 relevantEntrys = getRelevantEntrys(logFileAr)
 users = getUsers(relevantEntrys)
 
+if outputMode == 'shell':
+	print '# Zeilen:', len(logFileAr)
+	print '# Erster Eintrag vom:', getDateFromEntry(logFileAr[0]) #logFileAr[0].split(' ')[0], logFileAr[0].split(' ')[1]
+	print '# Letzer Eintrag vom:', getDateFromEntry(logFileAr[len(logFileAr)-2])
+	for user in users:
+		print ''
+		print (' '+ user +' ').center(23, '#') #'#'* 10, user, '#'*10
+		print 'logins:',  getUserLogins(user, relevantEntrys)
+		print 'first login:',  getUserFirstLogin(user, relevantEntrys)
+		print 'last login:',  getUserLastLogin(user, relevantEntrys)
+		print 'playtime:', getUserPlaytime(user, relevantEntrys)
+		print 'warps:', getUserWarps(user, logFileAr)
+		print 'teleports:', getUserTp(user, logFileAr)
 
-print '# Zeilen:', len(logFileAr)
-print '# Erster Eintrag vom:', getDateFromEntry(logFileAr[0]) #logFileAr[0].split(' ')[0], logFileAr[0].split(' ')[1]
-print '# Letzer Eintrag vom:', getDateFromEntry(logFileAr[len(logFileAr)-2])
-for user in users:
 	print ''
-	print (' '+ user +' ').center(23, '#') #'#'* 10, user, '#'*10
-	print 'logins:',  getUserLogins(user, relevantEntrys)
-	print 'last login:',  getUserLastLogin(user, relevantEntrys)
-	print 'playtime:', getUserPlaytime(user, relevantEntrys)
-	print 'warps:', getUserWarps(user, logFileAr)
-	print 'teleports:', getUserTp(user, logFileAr)
-
-print ''
-print '# exectime:', time.time() - startTime 
+	print '# exectime:', time.time() - startTime 
+elif outputMode == 'html':
+	print '<p>'
+	print '<table class="table"><tbody>'
+	print '<tr><td>Zeilen:</td><td>', len(logFileAr), '</td></tr>'
+	print '<tr><td>Erster Eintrag vom:</td><td>', getDateFromEntry(logFileAr[0]), '</td></tr>' #logFileAr[0].split(' ')[0], logFileAr[0].split(' ')[1]
+	print '<tr><td>Letzer Eintrag vom:</td><td>', getDateFromEntry(logFileAr[len(logFileAr)-2]), '</td></tr>'
+	print '</tbody></table>'
+	print '</p>'
+	for user in users:
+		print '<h2>', user, '</h2>'
+		print '<p>'
+		print '<table class="table table-striped"><tbody>'
+		print '<tr><td>logins:</td><td>',  getUserLogins(user, relevantEntrys), '</td></tr>'
+		print '<tr><td>first login:</td><td>',  getUserFirstLogin(user, relevantEntrys), '</td></tr>'
+		print '<tr><td>last login:</td><td>',  getUserLastLogin(user, relevantEntrys), '</td></tr>'
+		print '<tr><td>playtime:</td><td>', getUserPlaytime(user, relevantEntrys), '</td></tr>'
+		print '<tr><td>warps:</td><td>', getUserWarps(user, logFileAr), '</td></tr>'
+		print '<tr><td>teleports:</td><td>', getUserTp(user, logFileAr), '</td></tr>'
+		print '</tbody></table>'
+		print '</p>'
+	print '<p><small class="disabled">exectime:', time.time() - startTime, '</small></p>'
