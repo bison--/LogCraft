@@ -14,7 +14,7 @@ class logFileToJson(object):
 		allFiles = os.listdir(self.logDir)
 		#allFiles.sort(key=lambda x: os.path.getctime(os.path.join(self.logDir, x)))
 		allFiles.sort(key=lambda x: helper.getFileDate(x))
-		print allFiles
+		#print allFiles
 		for file in allFiles:
 			#print file
 			logFileFullPath = os.path.join(self.logDir, file)
