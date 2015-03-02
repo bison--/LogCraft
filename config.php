@@ -1,6 +1,6 @@
 <?php
 
-$cacheFileEnabled = true;
+$cacheFileEnabled = false;
 $cacheFile = 'cache.txt';
 $cacheFileMaxAge = 600;  // in seconds
-$logFiles = array('logs/minecraft_server_old.log');
+$logFiles = array('logs/');  // relative or full-paths to log-directorys

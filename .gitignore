@@ -99,3 +99,10 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# IDE
+.idea
+
+# minecraft specific
+*.gz
+*.json
