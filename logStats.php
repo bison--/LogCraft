@@ -23,6 +23,13 @@ if (isset($_REQUEST['page']) && $_REQUEST['page'] == 'details') {
         $output = file_get_contents($cacheFile);
     }
 } else {
+    $output .= '<style type="text/css">
+    img {
+      width: inherit;  /* This makes the next two lines work in IE8. */
+      max-width: 100%; /* Add !important if needed. */
+      height: auto;    /* Add !important if needed. */
+    }
+    </style>';
     $output .= '<p><center><img src="header-bg.jpg"></center></p>';
     $output .= '<p><a href="" class="btn btn-default btn-lg btn-block">AKTUALISIEREN</a></p>';
     $output .= '<p><a href="?page=details" class="btn btn-default btn-lg btn-block">DETAILS</a></p>';

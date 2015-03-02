@@ -5,6 +5,7 @@ import gzip
 import json
 import helper
 
+
 class logFileToJson(object):
 	def __init__(self, directory=''):
 		self.logDir = directory
@@ -33,7 +34,6 @@ class logFileToJson(object):
 				#self.convertFile(file)
 				if self.forceJsonWrite or file == 'latest.log' or (jsonName != '' and not os.path.isfile(jsonPath)):
 					self.convertFile(logFileFullPath, jsonPath, file)
-
 
 	def getFileDateString(self, logFileFullPath, logFileName):
 		fileDateString = ''
@@ -83,4 +83,3 @@ class logFileToJson(object):
 		fh = open(jsonPath, 'w')
 		fh.write(json.dumps(jsonList))
 		fh.close()
-

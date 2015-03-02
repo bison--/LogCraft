@@ -1,4 +1,5 @@
 import datetime
+
 def getFileDate(logFileName=''):
 	#print logFileName
 	fileDate = None

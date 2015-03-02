@@ -285,6 +285,7 @@ elif outputMode == 'html_online':
 			loggedInStr = '<span class="label label-default">Offline</span>'
 
 		print '<tr><td>', user, '</td><td>', loggedInStr, '</td></tr>'
+
 	print '</tbody></table>'
 	print '</div>'
 elif outputMode == 'html':
