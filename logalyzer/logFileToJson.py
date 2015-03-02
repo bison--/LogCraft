@@ -31,7 +31,7 @@ class logFileToJson(object):
 				jsonPath = os.path.join(self.logDir, jsonName)
 				#print jsonName
 				#self.convertFile(file)
-				if self.forceJsonWrite or jsonName == 'latest.log' or (jsonName != '' and not os.path.isfile(jsonPath)):
+				if self.forceJsonWrite or file == 'latest.log' or (jsonName != '' and not os.path.isfile(jsonPath)):
 					self.convertFile(logFileFullPath, jsonPath, file)
 
 
