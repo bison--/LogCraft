@@ -3,14 +3,18 @@ import datetime
 import os
 import gzip
 import json
+import helper
 
 class logFileToJson(object):
 	def __init__(self, directory=''):
 		self.logDir = directory
+		self.forceJsonWrite = False
 
 	def convertAll(self):
 		allFiles = os.listdir(self.logDir)
-		allFiles.sort(key=lambda x: os.path.getmtime(os.path.join(self.logDir, x)))
+		#allFiles.sort(key=lambda x: os.path.getctime(os.path.join(self.logDir, x)))
+		allFiles.sort(key=lambda x: helper.getFileDate(x))
+		print allFiles
 		for file in allFiles:
 			#print file
 			logFileFullPath = os.path.join(self.logDir, file)
@@ -27,8 +31,9 @@ class logFileToJson(object):
 				jsonPath = os.path.join(self.logDir, jsonName)
 				#print jsonName
 				#self.convertFile(file)
-				if jsonName == 'latest.log' or (jsonName != '' and not os.path.isfile(jsonPath)):
+				if self.forceJsonWrite or jsonName == 'latest.log' or (jsonName != '' and not os.path.isfile(jsonPath)):
 					self.convertFile(logFileFullPath, jsonPath, file)
+
 
 	def getFileDateString(self, logFileFullPath, logFileName):
 		fileDateString = ''

@@ -7,6 +7,7 @@ import time
 import re
 import json
 from  logFileToJson import logFileToJson
+import helper
 
 startTime = time.time()
 #2013-01-21 03:23:33 [INFO] [AuthMe] NAME logged in!
@@ -88,7 +89,8 @@ for logFileDir in logFileDirs:
 	lfToJson = logFileToJson(logFileDir)
 	lfToJson.convertAll()
 	allFiles = os.listdir(logFileDir)
-	allFiles.sort(key=lambda x: os.path.getmtime(os.path.join(logFileDir, x)))
+	#allFiles.sort(key=lambda x: os.path.getctime(os.path.join(logFileDir, x)))
+	allFiles.sort(key=lambda x: helper.getFileDate(x))
 	for file in allFiles:
 		if file.endswith('.json'):
 			fh = open(os.path.join(logFileDir, file))
