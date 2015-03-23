@@ -74,6 +74,8 @@ for message in DEATH_MESSAGES:
 logFiles = []  #('/var/minecraftServer/theWorld/server.log',)
 logFileDirs = []
 outputMode = ''
+#sys.argv.append('-html')
+#sys.argv.append('../logs/')
 if len(sys.argv) <= 2:
 	print 'first parameter MUST be the mode -html or -shell'
 	print 'all other parameters are the logfile folders'
@@ -328,7 +330,7 @@ elif outputMode == 'html':
 			deathString += death + ': ' + str(deathCount) + '<br>'
 
 		print '<tr><td>deaths:</td><td>', totalDeaths, '</td></tr>'
-		print '<tr><td>death kinds:</td><td>', deathString, '</td></tr>'
+		print '<tr><td>death kinds:</td><td>', deathString.encode("utf-8"), '</td></tr>'
 		#print '<tr><td>warps:</td><td>', getUserWarps(user, relevantEntrys), '</td></tr>'
 		#print '<tr><td>teleports:</td><td>', getUserTp(user, relevantEntrys), '</td></tr>'
 		print '</tbody></table>'
