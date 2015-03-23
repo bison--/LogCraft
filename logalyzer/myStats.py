@@ -312,7 +312,7 @@ elif outputMode == 'html':
 		print '<table class="table table-striped"><tbody>'
 		print '<tr><td>logins:</td><td>',  getUserLogins(user, relevantEntrys), '</td></tr>'
 		print '<tr><td>first login:</td><td>',  getUserFirstLogin(user, relevantEntrys), '</td></tr>'
-		print '<tr><td>last login:</td><td>',  getUserLastLogin(user, relevantEntrys), '</td></tr>'
+		print '<tr><td>last log-in/out:</td><td>',  getUserLastLogin(user, relevantEntrys), '</td></tr>'
 		print '<tr><td>playtime:</td><td>', getUserPlaytime(user, relevantEntrys), '</td></tr>'
 
 		achievements = getAchievements(user, relevantEntrys)
