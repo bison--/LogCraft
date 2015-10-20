@@ -318,7 +318,7 @@ elif outputMode == 'html_online':
 	for user in users:
 		userAvatarStr = ''
 		if DOWNLOAD_AVATARS:
-			imageName = downloadAvatarForUser(user, getUuidFromUser(user))
+			imageName = downloadAvatarForUser(user, getUuidFromUser(user, jsonAr))
 			if imageName != '':
 				userAvatarStr = '<img src="'+AVATAR_PATH+imageName+'">'
 
