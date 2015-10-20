@@ -172,7 +172,7 @@ def downloadAvatarForUser(username):
 	# http://skins.minecraft.net/MinecraftSkins/' . $user . '.png'
 	rawFileName = username +'_raw.png'
 	if not os.path.isfile(rawFileName):
-		urllib.urlretrieve('http://skins.minecraft.net/MinecraftSkins/'+ username +'_raw.png', AVATAR_PATH + rawFileName)
+		urllib.urlretrieve('http://skins.minecraft.net/MinecraftSkins/'+ username +'.png', AVATAR_PATH + rawFileName)
 	
 	return rawFileName
 
