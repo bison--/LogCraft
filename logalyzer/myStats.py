@@ -171,8 +171,13 @@ def downloadAvatarForUser(username):
 	# works without all this crap above -.-
 	# http://skins.minecraft.net/MinecraftSkins/' . $user . '.png'
 	rawFileName = username +'_raw.png'
-	if not os.path.isfile(rawFileName):
+	print os.path.getsize(AVATAR_PATH + rawFileName)
+	if not os.path.isfile(AVATAR_PATH + rawFileName) or os.path.getsize(AVATAR_PATH + rawFileName) == 13:
 		urllib.urlretrieve('http://skins.minecraft.net/MinecraftSkins/'+ username +'.png', AVATAR_PATH + rawFileName)
+	
+	#still no image? return SETEVE!
+	if os.path.getsize(AVATAR_PATH + rawFileName) == 13:
+		return downloadAvatarForUser('steve')
 	
 	return rawFileName
 
