@@ -9,6 +9,9 @@ import json
 from  logFileToJson import logFileToJson
 import helper
 
+DOWNLOAD_AVATARS = True
+AVATAR_PATH = 'assets/avatars/'  # with / at the end!
+
 startTime = time.time()
 #2013-01-21 03:23:33 [INFO] [AuthMe] NAME logged in!
 #2013-01-21 04:59:01 [INFO] Connection reset
@@ -132,6 +135,39 @@ def getRelevantEntrys(jsonAr):
 				relEntrys.append(r)
 	
 	return relEntrys
+
+def getUuidFromUser(username, jsonAr):
+	#[19:49:20] [User Authenticator #10/INFO]: UUID of player Name is xxxxxx-f1d5-xxxx-xxxx-xxxxxxxx
+	uuid = ''
+	for r in jsonAr:
+		if username in r['line'] and 'UUID of player' in r['line']:
+			parts = r['line'].split(' ')
+			uuid = parts[:0]
+			uuid = uuid.replace('-', '')
+			break
+
+	return uuid
+
+def downloadAvatarForUser(username, uuid):
+	#https://sessionserver.mojang.com/session/minecraft/profile/<UUID>
+	#{"id":"<UUID>","name":"<USERNAME>","properties":[{"name":"textures","value":"eyJ0aW1lc3RhbXAiOjE0NDUzNjQ4NTkxODcsInByb2ZpbGVJZCI6ImFlYTdhYzE3YzYwNzQ0YWNhNzlkNjM0ZjVmZTI2ZTRmIiwicHJvZmlsZU5hbWUiOiJHZW5lcmFsTUJpc29uIiwidGV4dHVyZXMiOnsiU0tJTiI6eyJ1cmwiOiJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2U3NjlkNTRhNzgwMTM3MDhlYTA0ZDhmOTRmNWVkNDE5MTUxZjE5NTU1M2Q4NTU2ZDg0M2I5ZmE1NDM1OTE1In19fQ=="}],"legacy":true}
+	import urllib
+	import base64
+	url = 'https://sessionserver.mojang.com/session/minecraft/profile/'+uuid
+	response = urllib.urlopen(url)
+	data = json.loads(response.read())
+	response.close()
+	#ON ERROR:{"error":"TooManyRequestsException","errorMessage":"The client has sent too many requests within a certain amount of time"}
+	if 'error' in data:
+		return ''
+
+	for properti in data['properties']:
+		if properti['name'] == 'textures':
+			textureBase64 = properti['value']
+			textureJson = json.loads(base64.b64decode(textureBase64))
+			urllib.urlretrieve(textureJson['testure']['SKIN']['url'], username+'.png')
+
+	return username+'.png'
 
 def getUserLogins(username, jsonAr):
 	count = 0
@@ -280,13 +316,19 @@ elif outputMode == 'html_online':
 	print '<div class="table-responsive">'
 	print '<table class="table table-striped"><tbody>'
 	for user in users:
+		userAvatarStr = ''
+		if DOWNLOAD_AVATARS:
+			imageName = downloadAvatarForUser(user, getUuidFromUser(user))
+			if imageName != '':
+				userAvatarStr = '<img src="'+AVATAR_PATH+imageName+'">'
+
 		loggedInStr = ''
 		if isUserLoggedIn(user, relevantEntrys):
 			loggedInStr = '<span class="label label-success">Online</span>'
 		else:
 			loggedInStr = '<span class="label label-default">Offline</span>'
 
-		print '<tr><td>', user, '</td><td>', loggedInStr, '</td></tr>'
+		print '<tr><td>', userAvatarStr, '</td><td>', user, '</td><td>', loggedInStr, '</td></tr>'
 
 	print '</tbody></table>'
 	print '</div>'

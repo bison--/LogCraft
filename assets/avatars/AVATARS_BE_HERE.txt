@@ -1,0 +1,27 @@
+UUID=user savegame file name without -
+
+https://sessionserver.mojang.com/session/minecraft/profile/<UUID>
+
+ON OK:
+{"id":"<UUID>","name":"<USERNAME>","properties":[{"name":"textures","value":"eyJ0aW1lc3RhbXAiOjE0NDUzNjQ4NTkxODcsInByb2ZpbGVJZCI6ImFlYTdhYzE3YzYwNzQ0YWNhNzlkNjM0ZjVmZTI2ZTRmIiwicHJvZmlsZU5hbWUiOiJHZW5lcmFsTUJpc29uIiwidGV4dHVyZXMiOnsiU0tJTiI6eyJ1cmwiOiJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2U3NjlkNTRhNzgwMTM3MDhlYTA0ZDhmOTRmNWVkNDE5MTUxZjE5NTU1M2Q4NTU2ZDg0M2I5ZmE1NDM1OTE1In19fQ=="}],"legacy":true}
+
+ON ERROR:
+{"error":"TooManyRequestsException","errorMessage":"The client has sent too many requests within a certain amount of time"}
+
+
+The "value" base64 string for the "textures" object decoded:
+
+{
+    "timestamp": "<java time in ms>",
+    "profileId": "<profile uuid>",
+    "profileName": "<player name>",
+    "isPublic": "<true or false>",
+    "textures": {
+        "SKIN": {
+            "url": "<player skin URL>"
+        },
+        "CAPE": {
+            "url": "<player cape URL>"
+        }
+    }
+}
