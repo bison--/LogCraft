@@ -142,32 +142,39 @@ def getUuidFromUser(username, jsonAr):
 	for r in jsonAr:
 		if username in r['line'] and 'UUID of player' in r['line']:
 			parts = r['line'].split(' ')
-			uuid = parts[:0]
+			uuid = parts[-1]
 			uuid = uuid.replace('-', '')
 			break
 
 	return uuid
 
-def downloadAvatarForUser(username, uuid):
+def downloadAvatarForUser(username):
 	#https://sessionserver.mojang.com/session/minecraft/profile/<UUID>
 	#{"id":"<UUID>","name":"<USERNAME>","properties":[{"name":"textures","value":"eyJ0aW1lc3RhbXAiOjE0NDUzNjQ4NTkxODcsInByb2ZpbGVJZCI6ImFlYTdhYzE3YzYwNzQ0YWNhNzlkNjM0ZjVmZTI2ZTRmIiwicHJvZmlsZU5hbWUiOiJHZW5lcmFsTUJpc29uIiwidGV4dHVyZXMiOnsiU0tJTiI6eyJ1cmwiOiJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2U3NjlkNTRhNzgwMTM3MDhlYTA0ZDhmOTRmNWVkNDE5MTUxZjE5NTU1M2Q4NTU2ZDg0M2I5ZmE1NDM1OTE1In19fQ=="}],"legacy":true}
 	import urllib
-	import base64
-	url = 'https://sessionserver.mojang.com/session/minecraft/profile/'+uuid
-	response = urllib.urlopen(url)
-	data = json.loads(response.read())
-	response.close()
-	#ON ERROR:{"error":"TooManyRequestsException","errorMessage":"The client has sent too many requests within a certain amount of time"}
-	if 'error' in data:
-		return ''
+	#import base64
+	#url = 'https://sessionserver.mojang.com/session/minecraft/profile/'+uuid
+	#response = urllib.urlopen(url)
+	#data = json.loads(response.read())
+	#response.close()
+	##ON ERROR:{"error":"TooManyRequestsException","errorMessage":"The client has sent too many requests within a certain amount of time"}
+	#if 'error' in data:
+	#	return ''
 
-	for properti in data['properties']:
-		if properti['name'] == 'textures':
-			textureBase64 = properti['value']
-			textureJson = json.loads(base64.b64decode(textureBase64))
-			urllib.urlretrieve(textureJson['testure']['SKIN']['url'], username+'.png')
+	#for properti in data['properties']:
+	#	if properti['name'] == 'textures':
+	#		textureBase64 = properti['value']
+	#		textureJson = json.loads(base64.b64decode(textureBase64))
+	#		#{u'textures': {u'SKIN': {u'url': u'http://textures.minecraft.net/texture/fe72a6fefe354da56c37dc697a6652b3b9b458ea6d27dd9d863435cf64ab'}}, u'timestamp': 1445369897867, u'profileName': u'bandit2507', u'profileId': u'92c3ccb228134e7ea022c0b9b09ba810'}
+	#		urllib.urlretrieve(textureJson['textures']['SKIN']['url'], username+'_raw.png')
 
-	return username+'.png'
+	# works without all this crap above -.-
+	# http://skins.minecraft.net/MinecraftSkins/' . $user . '.png'
+	rawFileName = username +'_raw.png'
+	if not os.path.isfile(rawFileName):
+		urllib.urlretrieve('http://skins.minecraft.net/MinecraftSkins/'+ username +'_raw.png', AVATAR_PATH + rawFileName)
+	
+	return rawFileName
 
 def getUserLogins(username, jsonAr):
 	count = 0
@@ -318,7 +325,7 @@ elif outputMode == 'html_online':
 	for user in users:
 		userAvatarStr = ''
 		if DOWNLOAD_AVATARS:
-			imageName = downloadAvatarForUser(user, getUuidFromUser(user, relevantEntrys))
+			imageName = downloadAvatarForUser(user)
 			if imageName != '':
 				userAvatarStr = '<img src="'+AVATAR_PATH+imageName+'">'
 
