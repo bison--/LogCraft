@@ -1,8 +1,8 @@
-__author__ = 'bison--'
 from PIL import Image, ImageDraw
 
 class skin2avatar(object):
-	'''
+	"""skin2avatar
+
 	minecraft body coordinates
 	full avatar size: 16x32
 
@@ -35,18 +35,19 @@ class skin2avatar(object):
 	52x20
 	+4+12
 	new: 12x8
-	'''
-	def __init__(self):
-		self.allPixels = []
-		self.pixels =  None
+	"""
 
-		self.newImg = Image.new("RGBA", (16, 32), (255,0,0,0))  # transparent: (255,0,0,0) some sort of grey: (50,50,50,50)
+	def __init__(self):
+		self.allPixels = list()
+		self.pixels = None
+
+		self.newImg = Image.new("RGBA", (16, 32), (255, 0, 0, 0))  # transparent: (255,0,0,0) some sort of grey: (50,50,50,50)
 		self.newImgDraw = ImageDraw.Draw(self.newImg)
 
 	def transform(self, sourceFile, destFile):
-		i = Image.open(sourceFile)
+		img = Image.open(sourceFile)
 
-		self.pixels = i.load() # this is not a list, nor is it list()'able
+		self.pixels = img.load()  # this is not a list, nor is it list()'able
 
 		self.remapPixels(8,8,8+8,8+8, 4,0,4+8,0+8)  # head
 		self.remapPixels(20,20,20+8,20+12, 4,8,4+8,8+12)  # body
@@ -57,18 +58,8 @@ class skin2avatar(object):
 
 		self.newImg.save(destFile, "PNG")
 
-		'''
-		width, height = i.size
-
-		head_pix = []
-		body_pix = []
-		for x in range(width):
-			for y in range(height):
-				cpixel = self.pixels[x, y]
-				self.allPixels.append(cpixel)'''
-
 	def getPartFromImage(self, fromX, fromY, toX, ToY):
-		partPixels = []
+		partPixels = list()
 		for x in range(fromX, toX):
 			for y in range(fromY, ToY):
 				partPixels.append(self.pixels[x, y])
@@ -81,7 +72,6 @@ class skin2avatar(object):
 		partPixels = []
 		for x in range(fromX, toX):
 			for y in range(fromY, toY):
-				#color = (x % 255, y % 255, (x % (y+1)) % 255)
 				#print x, y
 				partPixels.append(self.pixels[x, y])
 
