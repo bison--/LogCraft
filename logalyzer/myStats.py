@@ -183,9 +183,10 @@ def downloadAvatarForUser(username):
 	if os.path.getsize(AVATAR_PATH + rawFileName) == 13 and username != 'steve':
 		return downloadAvatarForUser('steve')
 
-	import skin2avatar
-	s2a = skin2avatar.skin2avatar()
-	s2a.transform(AVATAR_PATH + rawFileName, AVATAR_PATH + avatarFileName)
+	if not os.path.isfile(AVATAR_PATH + avatarFileName):
+		import skin2avatar
+		s2a = skin2avatar.skin2avatar()
+		s2a.transform(AVATAR_PATH + rawFileName, AVATAR_PATH + avatarFileName)
 	
 	return avatarFileName
 
